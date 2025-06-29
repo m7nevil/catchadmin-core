@@ -13,6 +13,8 @@
 namespace Catch\Providers;
 
 use Catch\CatchAdmin;
+use Illuminate\Contracts\Foundation\CachesConfiguration;
+use Illuminate\Contracts\Foundation\CachesRoutes;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Psr\Container\ContainerExceptionInterface;
@@ -65,6 +67,10 @@ abstract class CatchModuleServiceProvider extends ServiceProvider
      */
     protected function loadConfig()
     {
+        if ($this->app instanceof CachesConfiguration && $this->app->configurationIsCached()) {
+            return;
+        }
+
         if (! is_dir($configPath = $this->configPath())) {
             return;
         }
@@ -96,6 +102,10 @@ abstract class CatchModuleServiceProvider extends ServiceProvider
      */
     protected function loadModuleRoute(): void
     {
+        if ($this->app instanceof CachesRoutes && $this->app->routesAreCached()) {
+            return;
+        }
+
         $routes = $this->app['config']->get('catch.module.routes', []);
 
         $routes[] = CatchAdmin::getModuleRoutePath($this->moduleName());
