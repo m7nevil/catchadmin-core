@@ -160,8 +160,9 @@ trait BaseOperate
             }
         }
 
-        if ($this->isFillCreatorId && in_array($this->getCreatorIdColumn(), $this->getFillable())) {
-            $data['creator_id'] = Auth::guard(getGuardName())->id();
+        $creatorIdColumn = $this->getCreatorIdColumn();
+        if ($this->isFillCreatorId && in_array($creatorIdColumn, $this->getFillable())) {
+            $data[$creatorIdColumn] = Auth::guard(getGuardName())->id();
         }
 
         return $data;
